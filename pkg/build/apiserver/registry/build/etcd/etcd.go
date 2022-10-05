@@ -1,9 +1,6 @@
 package etcd
 
 import (
-	"context"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apiserver/pkg/registry/generic"
 	"k8s.io/apiserver/pkg/registry/generic/registry"
@@ -59,20 +56,10 @@ func NewREST(optsGetter generic.RESTOptionsGetter) (*REST, *DetailsREST, error) 
 }
 
 type DetailsREST struct {
-	store *registry.Store
+	*registry.Store
 }
 
 var _ rest.Updater = &DetailsREST{}
-
-// New returns an empty object that can be used with Update after request data has been put into it.
-func (r *DetailsREST) New() runtime.Object {
-	return r.store.New()
-}
-
-// Update finds a resource in the storage and updates it.
-func (r *DetailsREST) Update(ctx context.Context, name string, objInfo rest.UpdatedObjectInfo, createValidation rest.ValidateObjectFunc, updateValidation rest.ValidateObjectUpdateFunc, forceAllowCreate bool, options *metav1.UpdateOptions) (runtime.Object, bool, error) {
-	return r.store.Update(ctx, name, objInfo, createValidation, updateValidation, forceAllowCreate, options)
-}
 
 // LegacyREST allows us to wrap and alter some behavior
 type LegacyREST struct {

@@ -83,6 +83,8 @@ func (r *REST) New() runtime.Object {
 	return &appsapi.DeploymentLog{}
 }
 
+func (r *REST) Destroy() {}
+
 // Get returns a streamer resource with the contents of the deployment log
 func (r *REST) Get(ctx context.Context, name string, opts runtime.Object) (runtime.Object, error) {
 	// Ensure we have a namespace in the context

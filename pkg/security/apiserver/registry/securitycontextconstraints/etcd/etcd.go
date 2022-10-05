@@ -62,6 +62,10 @@ func (r *REST) New() runtime.Object {
 	return &securityapi.SecurityContextConstraints{}
 }
 
+func (r *REST) Destroy() {
+	// nothing to do
+}
+
 func (r *REST) Create(ctx context.Context, obj runtime.Object, createValidation rest.ValidateObjectFunc, options *metav1.CreateOptions) (runtime.Object, error) {
 	return nil, errors.NewInternalError(fmt.Errorf("unsupported"))
 }

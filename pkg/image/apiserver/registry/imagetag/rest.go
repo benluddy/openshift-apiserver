@@ -62,12 +62,14 @@ func (r *REST) New() runtime.Object {
 	return &imageapi.ImageTag{}
 }
 
+func (r *REST) Destroy() {}
+
 // NewList returns a new list object
 func (r *REST) NewList() runtime.Object {
 	return &imageapi.ImageTagList{}
 }
 
-func (s *REST) NamespaceScoped() bool {
+func (r *REST) NamespaceScoped() bool {
 	return true
 }
 

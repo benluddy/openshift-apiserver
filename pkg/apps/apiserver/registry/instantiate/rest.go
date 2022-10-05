@@ -36,14 +36,14 @@ import (
 // NewREST provides new REST storage for the apps API group.
 func NewREST(store registry.Store, imagesclient imagev1client.Interface, kc kubernetes.Interface, admission admission.Interface) *REST {
 	store.UpdateStrategy = Strategy
-	return &REST{store: &store, is: imagesclient.ImageV1(), rn: kc.CoreV1(), admit: admission}
+	return &REST{Store: &store, is: imagesclient.ImageV1(), rn: kc.CoreV1(), admit: admission}
 }
 
 // REST implements the Creater interface.
 var _ = rest.Creater(&REST{})
 
 type REST struct {
-	store *registry.Store
+	*registry.Store
 	is    imagev1typedclient.ImageStreamsGetter
 	rn    corev1client.ReplicationControllersGetter
 	admit admission.Interface
@@ -61,7 +61,7 @@ func (s *REST) Create(ctx context.Context, obj runtime.Object, createValidation 
 	}
 	var ret runtime.Object
 	err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		configObj, err := s.store.Get(ctx, req.Name, &metav1.GetOptions{})
+		configObj, err := s.Get(ctx, req.Name, &metav1.GetOptions{})
 		if err != nil {
 			return err
 		}
@@ -117,7 +117,7 @@ func (s *REST) Create(ctx context.Context, obj runtime.Object, createValidation 
 			return err
 		}
 
-		ret, _, err = s.store.Update(
+		ret, _, err = s.Update(
 			ctx,
 			config.Name,
 			rest.DefaultUpdatedObjectInfo(config),

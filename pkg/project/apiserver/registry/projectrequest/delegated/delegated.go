@@ -85,6 +85,8 @@ func (r *REST) New() runtime.Object {
 	return &projectapi.ProjectRequest{}
 }
 
+func (r *REST) Destroy() {}
+
 func (r *REST) NewList() runtime.Object {
 	return &metav1.Status{}
 }

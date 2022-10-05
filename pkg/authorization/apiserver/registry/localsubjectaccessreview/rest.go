@@ -33,6 +33,8 @@ func (r *REST) New() runtime.Object {
 	return &authorizationapi.LocalSubjectAccessReview{}
 }
 
+func (r *REST) Destroy() {}
+
 func (s *REST) NamespaceScoped() bool {
 	return true
 }

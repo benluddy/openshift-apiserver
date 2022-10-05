@@ -100,14 +100,14 @@ func NewRESTWithLimitVerifier(
 		return nil, nil, nil, nil, err
 	}
 
-	layersREST := &LayersREST{index: imageLayerIndex, store: &store}
+	layersREST := &LayersREST{index: imageLayerIndex, Store: &store}
 
 	statusStrategy := imagestream.NewStatusStrategy(strategy)
 	statusStore := store
 	statusStore.Decorator = nil
 	statusStore.CreateStrategy = nil
 	statusStore.UpdateStrategy = statusStrategy
-	statusREST := &StatusREST{store: &statusStore}
+	statusREST := &StatusREST{Store: &statusStore}
 
 	internalStore := store
 	internalStrategy := imagestream.NewInternalStrategy(strategy)
@@ -121,7 +121,7 @@ func NewRESTWithLimitVerifier(
 
 // StatusREST implements the REST endpoint for changing the status of an image stream.
 type StatusREST struct {
-	store *registry.Store
+	*registry.Store
 }
 
 var _ rest.Getter = &StatusREST{}
@@ -132,16 +132,6 @@ var _ = rest.Patcher(&StatusREST{})
 
 func (r *StatusREST) New() runtime.Object {
 	return &imageapi.ImageStream{}
-}
-
-// Get retrieves the object from the storage. It is required to support Patch.
-func (r *StatusREST) Get(ctx context.Context, name string, options *metav1.GetOptions) (runtime.Object, error) {
-	return r.store.Get(ctx, name, options)
-}
-
-// Update alters the status subset of an object.
-func (r *StatusREST) Update(ctx context.Context, name string, objInfo rest.UpdatedObjectInfo, createValidation rest.ValidateObjectFunc, updateValidation rest.ValidateObjectUpdateFunc, forceAllowCreate bool, options *metav1.UpdateOptions) (runtime.Object, bool, error) {
-	return r.store.Update(ctx, name, objInfo, createValidation, updateValidation, forceAllowCreate, options)
 }
 
 // InternalREST implements the REST endpoint for changing both the spec and status of an image stream.
@@ -168,7 +158,7 @@ func (r *InternalREST) Update(ctx context.Context, name string, objInfo rest.Upd
 
 // LayersREST implements the REST endpoint for changing both the spec and status of an image stream.
 type LayersREST struct {
-	store *registry.Store
+	*registry.Store
 	index ImageLayerIndex
 }
 
@@ -181,9 +171,9 @@ func (r *LayersREST) New() runtime.Object {
 // Get returns the layers for an image stream.
 func (r *LayersREST) Get(ctx context.Context, name string, options *metav1.GetOptions) (runtime.Object, error) {
 	if !r.index.HasSynced() {
-		return nil, errors.NewServerTimeout(r.store.DefaultQualifiedResource, "get", 2)
+		return nil, errors.NewServerTimeout(r.DefaultQualifiedResource, "get", 2)
 	}
-	obj, err := r.store.Get(ctx, name, options)
+	obj, err := r.Store.Get(ctx, name, options)
 	if err != nil {
 		return nil, err
 	}

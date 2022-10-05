@@ -69,6 +69,8 @@ func (s *REST) New() runtime.Object {
 	return &projectapi.Project{}
 }
 
+func (s *REST) Destroy() {}
+
 // NewList returns a new ProjectList
 func (*REST) NewList() runtime.Object {
 	return &projectapi.ProjectList{}

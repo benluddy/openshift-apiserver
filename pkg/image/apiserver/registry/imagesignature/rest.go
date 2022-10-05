@@ -38,7 +38,9 @@ func (r *REST) New() runtime.Object {
 	return &imageapi.ImageSignature{}
 }
 
-func (s *REST) NamespaceScoped() bool {
+func (r *REST) Destroy() {}
+
+func (r *REST) NamespaceScoped() bool {
 	return false
 }
 

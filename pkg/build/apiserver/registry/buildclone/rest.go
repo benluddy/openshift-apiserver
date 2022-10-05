@@ -29,6 +29,8 @@ func (s *CloneREST) New() runtime.Object {
 	return &buildapi.BuildRequest{}
 }
 
+func (s *CloneREST) Destroy() {}
+
 // Create instantiates a new build from an existing build
 func (s *CloneREST) Create(ctx context.Context, obj runtime.Object, createValidation rest.ValidateObjectFunc, options *metav1.CreateOptions) (runtime.Object, error) {
 	if err := rest.BeforeCreate(Strategy, ctx, obj); err != nil {

@@ -32,6 +32,8 @@ func (r *REST) New() runtime.Object {
 	return &coreapi.SecretList{}
 }
 
+func (r *REST) Destroy() {}
+
 func (r *REST) NewGetOptions() (runtime.Object, bool, string) {
 	return &metav1.ListOptions{}, false, ""
 }

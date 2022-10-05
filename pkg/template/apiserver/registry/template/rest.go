@@ -43,6 +43,8 @@ func (s *REST) New() runtime.Object {
 	return &templateapi.Template{}
 }
 
+func (s *REST) Destroy() {}
+
 func (s *REST) NamespaceScoped() bool {
 	return true
 }

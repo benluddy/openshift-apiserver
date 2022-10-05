@@ -336,6 +336,8 @@ func (r *REST) New() runtime.Object {
 	return &buildapi.BuildLog{}
 }
 
+func (r *REST) Destroy() {}
+
 // pipeLogs retrieves the logs for a particular container and streams them into the provided writer.
 func (r *REST) pipeLogs(ctx context.Context, namespace, buildPodName string, containerLogOpts *kapi.PodLogOptions, writer io.Writer) error {
 	klog.V(4).Infof("pulling build pod logs for %s/%s, container %s", namespace, buildPodName, containerLogOpts.Container)

@@ -54,7 +54,9 @@ func (r *REST) New() runtime.Object {
 	return &imageapi.ImageStreamImage{}
 }
 
-func (s *REST) NamespaceScoped() bool {
+func (r *REST) Destroy() {}
+
+func (r *REST) NamespaceScoped() bool {
 	return true
 }
 

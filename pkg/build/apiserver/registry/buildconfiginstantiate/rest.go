@@ -53,6 +53,8 @@ func (s *InstantiateREST) New() runtime.Object {
 	return &buildapi.BuildRequest{}
 }
 
+func (s *InstantiateREST) Destroy() {}
+
 // Create instantiates a new build from a build configuration
 func (s *InstantiateREST) Create(ctx context.Context, obj runtime.Object, createValidation rest.ValidateObjectFunc, options *metav1.CreateOptions) (runtime.Object, error) {
 	if err := rest.BeforeCreate(Strategy, ctx, obj); err != nil {
@@ -111,6 +113,8 @@ var _ rest.StorageMetadata = &InstantiateREST{}
 func (r *BinaryInstantiateREST) New() runtime.Object {
 	return &buildapi.BinaryBuildRequestOptions{}
 }
+
+func (r *BinaryInstantiateREST) Destroy() {}
 
 // Connect returns a ConnectHandler that will handle the request/response for a request
 func (r *BinaryInstantiateREST) Connect(ctx context.Context, name string, options runtime.Object, responder rest.Responder) (http.Handler, error) {

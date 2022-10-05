@@ -40,6 +40,9 @@ func NewREST(client restclient.Interface) utilregistry.NoWatchStorage {
 func (s *REST) New() runtime.Object {
 	return &authorizationapi.ClusterRoleBinding{}
 }
+
+func (s *REST) Destroy() {}
+
 func (s *REST) NewList() runtime.Object {
 	return &authorizationapi.ClusterRoleBindingList{}
 }

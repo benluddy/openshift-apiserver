@@ -69,20 +69,20 @@ func NewREST(optsGetter generic.RESTOptionsGetter) (*REST, *StatusREST, *ScaleRE
 		return nil, nil, nil, err
 	}
 
-	deploymentConfigREST := &REST{store}
+	deploymentConfigREST := &REST{Store: store}
 
 	statusStore := *store
 	statusStore.UpdateStrategy = deployconfig.StatusStrategy
-	statusREST := &StatusREST{store: &statusStore}
+	statusREST := &StatusREST{Store: &statusStore}
 
-	scaleREST := &ScaleREST{store: store}
+	scaleREST := &ScaleREST{Store: store}
 
 	return deploymentConfigREST, statusREST, scaleREST, nil
 }
 
 // ScaleREST contains the REST storage for the Scale subresource of DeploymentConfigs.
 type ScaleREST struct {
-	store *registry.Store
+	*registry.Store
 }
 
 var _ = rest.Patcher(&ScaleREST{})
@@ -105,7 +105,7 @@ func (r *ScaleREST) GroupVersionKind(containingGV schema.GroupVersion) schema.Gr
 
 // Get retrieves (computes) the Scale subresource for the given DeploymentConfig name.
 func (r *ScaleREST) Get(ctx context.Context, name string, options *metav1.GetOptions) (runtime.Object, error) {
-	deploymentConfig, err := r.store.Get(ctx, name, options)
+	deploymentConfig, err := r.Store.Get(ctx, name, options)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func (r *ScaleREST) Get(ctx context.Context, name string, options *metav1.GetOpt
 
 // Update scales the DeploymentConfig for the given Scale subresource, returning the updated Scale.
 func (r *ScaleREST) Update(ctx context.Context, name string, objInfo rest.UpdatedObjectInfo, createValidation rest.ValidateObjectFunc, updateValidation rest.ValidateObjectUpdateFunc, forceAllowCreate bool, options *metav1.UpdateOptions) (runtime.Object, bool, error) {
-	uncastObj, err := r.store.Get(ctx, name, &metav1.GetOptions{})
+	uncastObj, err := r.Store.Get(ctx, name, &metav1.GetOptions{})
 	if err != nil {
 		return nil, false, errors.NewNotFound(extensions.Resource("scale"), name)
 	}
@@ -137,7 +137,7 @@ func (r *ScaleREST) Update(ctx context.Context, name string, objInfo rest.Update
 	}
 
 	deploymentConfig.Spec.Replicas = scale.Spec.Replicas
-	if _, _, err := r.store.Update(ctx, deploymentConfig.Name, rest.DefaultUpdatedObjectInfo(deploymentConfig), createValidation, updateValidation, forceAllowCreate, options); err != nil {
+	if _, _, err := r.Store.Update(ctx, deploymentConfig.Name, rest.DefaultUpdatedObjectInfo(deploymentConfig), createValidation, updateValidation, forceAllowCreate, options); err != nil {
 		return nil, false, err
 	}
 
@@ -175,7 +175,7 @@ func scaleFromConfig(dc *appsapi.DeploymentConfig) *autoscaling.Scale {
 
 // StatusREST implements the REST endpoint for changing the status of a DeploymentConfig.
 type StatusREST struct {
-	store *registry.Store
+	*registry.Store
 }
 
 // StatusREST implements Patcher
@@ -183,16 +183,6 @@ var _ = rest.Patcher(&StatusREST{})
 
 func (r *StatusREST) New() runtime.Object {
 	return &appsapi.DeploymentConfig{}
-}
-
-// Get retrieves the object from the storage. It is required to support Patch.
-func (r *StatusREST) Get(ctx context.Context, name string, options *metav1.GetOptions) (runtime.Object, error) {
-	return r.store.Get(ctx, name, options)
-}
-
-// Update alters the status subset of an deploymentConfig.
-func (r *StatusREST) Update(ctx context.Context, name string, objInfo rest.UpdatedObjectInfo, createValidation rest.ValidateObjectFunc, updateValidation rest.ValidateObjectUpdateFunc, forceAllowCreate bool, options *metav1.UpdateOptions) (runtime.Object, bool, error) {
-	return r.store.Update(ctx, name, objInfo, createValidation, updateValidation, forceAllowCreate, options)
 }
 
 // LegacyREST allows us to wrap and alter some behavior

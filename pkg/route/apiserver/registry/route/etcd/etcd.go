@@ -1,9 +1,6 @@
 package etcd
 
 import (
-	"context"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apiserver/pkg/registry/generic"
 	"k8s.io/apiserver/pkg/registry/generic/registry"
@@ -65,7 +62,7 @@ func NewREST(optsGetter generic.RESTOptionsGetter, allocator routeinterfaces.Rou
 
 // StatusREST implements the REST endpoint for changing the status of a route.
 type StatusREST struct {
-	store *registry.Store
+	*registry.Store
 }
 
 // StatusREST implements Patcher
@@ -74,16 +71,6 @@ var _ = kapirest.Patcher(&StatusREST{})
 // New creates a new route resource
 func (r *StatusREST) New() runtime.Object {
 	return &routeapi.Route{}
-}
-
-// Get retrieves the object from the storage. It is required to support Patch.
-func (r *StatusREST) Get(ctx context.Context, name string, options *metav1.GetOptions) (runtime.Object, error) {
-	return r.store.Get(ctx, name, options)
-}
-
-// Update alters the status subset of an object.
-func (r *StatusREST) Update(ctx context.Context, name string, objInfo kapirest.UpdatedObjectInfo, createValidation rest.ValidateObjectFunc, updateValidation rest.ValidateObjectUpdateFunc, forceAllowCreate bool, options *metav1.UpdateOptions) (runtime.Object, bool, error) {
-	return r.store.Update(ctx, name, objInfo, createValidation, updateValidation, forceAllowCreate, options)
 }
 
 // LegacyREST allows us to wrap and alter some behavior

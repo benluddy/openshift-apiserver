@@ -69,6 +69,8 @@ func (h *WebHook) New() runtime.Object {
 	return &buildapi.Build{}
 }
 
+func (h *WebHook) Destroy() {}
+
 // Connect responds to connections with a ConnectHandler
 func (h *WebHook) Connect(ctx context.Context, name string, options runtime.Object, responder rest.Responder) (http.Handler, error) {
 	return &WebHookHandler{

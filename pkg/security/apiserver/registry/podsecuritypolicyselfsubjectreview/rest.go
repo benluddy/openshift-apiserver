@@ -40,6 +40,8 @@ func (r *REST) New() runtime.Object {
 	return &securityapi.PodSecurityPolicySelfSubjectReview{}
 }
 
+func (r *REST) Destroy() {}
+
 func (s *REST) NamespaceScoped() bool {
 	return true
 }

@@ -64,12 +64,14 @@ func (r *REST) New() runtime.Object {
 	return &imageapi.ImageStreamTag{}
 }
 
+func (r *REST) Destroy() {}
+
 // NewList returns a new list object
 func (r *REST) NewList() runtime.Object {
 	return &imageapi.ImageStreamTagList{}
 }
 
-func (s *REST) NamespaceScoped() bool {
+func (r *REST) NamespaceScoped() bool {
 	return true
 }
 
