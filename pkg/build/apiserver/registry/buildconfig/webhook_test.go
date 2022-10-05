@@ -12,6 +12,7 @@ import (
 	"strings"
 	"testing"
 
+	v1 "github.com/openshift/client-go/build/applyconfigurations/build/v1"
 	corev1 "k8s.io/api/core/v1"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -41,6 +42,14 @@ type fakeBuildConfigInterface struct {
 	inst      fakeInstantiator
 	client    buildclientv1.BuildConfigInterface
 	namespace string
+}
+
+func (f *fakeBuildConfigInterface) Apply(ctx context.Context, buildConfig *v1.BuildConfigApplyConfiguration, opts metav1.ApplyOptions) (result *buildv1.BuildConfig, err error) {
+	return f.client.Apply(ctx, buildConfig, opts)
+}
+
+func (f *fakeBuildConfigInterface) ApplyStatus(ctx context.Context, buildConfig *v1.BuildConfigApplyConfiguration, opts metav1.ApplyOptions) (result *buildv1.BuildConfig, err error) {
+	return f.client.ApplyStatus(ctx, buildConfig, opts)
 }
 
 func (f *fakeBuildConfigInterface) Create(ctx context.Context, build *buildv1.BuildConfig, opts metav1.CreateOptions) (*buildv1.BuildConfig, error) {
