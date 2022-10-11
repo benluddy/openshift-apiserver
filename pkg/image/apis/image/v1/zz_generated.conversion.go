@@ -45,11 +45,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.ImageImportStatus)(nil), (*image.ImageImportStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_ImageImportStatus_To_image_ImageImportStatus(a.(*v1.ImageImportStatus), b.(*image.ImageImportStatus), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*image.ImageImportStatus)(nil), (*v1.ImageImportStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_image_ImageImportStatus_To_v1_ImageImportStatus(a.(*image.ImageImportStatus), b.(*v1.ImageImportStatus), scope)
 	}); err != nil {
@@ -325,11 +320,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.TagImportPolicy)(nil), (*image.TagImportPolicy)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1_TagImportPolicy_To_image_TagImportPolicy(a.(*v1.TagImportPolicy), b.(*image.TagImportPolicy), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*image.TagImportPolicy)(nil), (*v1.TagImportPolicy)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_image_TagImportPolicy_To_v1_TagImportPolicy(a.(*image.TagImportPolicy), b.(*v1.TagImportPolicy), scope)
 	}); err != nil {
@@ -380,6 +370,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddConversionFunc((*v1.ImageImportStatus)(nil), (*image.ImageImportStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_ImageImportStatus_To_image_ImageImportStatus(a.(*v1.ImageImportStatus), b.(*image.ImageImportStatus), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddConversionFunc((*v1.ImageStreamSpec)(nil), (*image.ImageStreamSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_ImageStreamSpec_To_image_ImageStreamSpec(a.(*v1.ImageStreamSpec), b.(*image.ImageStreamSpec), scope)
 	}); err != nil {
@@ -392,6 +387,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddConversionFunc((*v1.Image)(nil), (*image.Image)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1_Image_To_image_Image(a.(*v1.Image), b.(*image.Image), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*v1.TagImportPolicy)(nil), (*image.TagImportPolicy)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1_TagImportPolicy_To_image_TagImportPolicy(a.(*v1.TagImportPolicy), b.(*image.TagImportPolicy), scope)
 	}); err != nil {
 		return err
 	}
