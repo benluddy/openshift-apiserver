@@ -177,6 +177,11 @@ func (h *binaryInstantiateHandler) ServeHTTP(w http.ResponseWriter, r *http.Requ
 
 func (h *binaryInstantiateHandler) handle(r io.Reader) (runtime.Object, error) {
 	h.options.Name = h.name
+	objectMeta, err := meta.Accessor(h.options)
+	if err != nil {
+		return nil, err
+	}
+	rest.FillObjectMetaSystemFields(objectMeta)
 	if err := rest.BeforeCreate(BinaryStrategy, h.ctx, h.options); err != nil {
 		klog.Infof("failed to validate binary: %#v", h.options)
 		return nil, err
