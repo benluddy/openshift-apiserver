@@ -4,14 +4,16 @@ import (
 	"net/url"
 	"strings"
 
+	v1 "github.com/openshift/api/apps/v1"
+	"github.com/openshift/library-go/pkg/image/imageutil"
+	newer "github.com/openshift/openshift-apiserver/pkg/apps/apis/apps"
+	"k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/conversion"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
-
-	v1 "github.com/openshift/api/apps/v1"
-	"github.com/openshift/library-go/pkg/image/imageutil"
-	newer "github.com/openshift/openshift-apiserver/pkg/apps/apis/apps"
+	"k8s.io/kubernetes/pkg/apis/autoscaling"
+	extensionsv1beta1conversions "k8s.io/kubernetes/pkg/apis/extensions/v1beta1"
 )
 
 func Convert_v1_DeploymentTriggerImageChangeParams_To_apps_DeploymentTriggerImageChangeParams(in *v1.DeploymentTriggerImageChangeParams, out *newer.DeploymentTriggerImageChangeParams, s conversion.Scope) error {
@@ -180,7 +182,21 @@ func Convert_url_Values_To_v1_DeploymentLogOptions(in *url.Values, out *v1.Deplo
 // AddCustomConversionFuncs adds conversion functions which cannot be automatically generated.
 // This is typically due to the objects not having 1:1 field mappings.
 func AddCustomConversionFuncs(scheme *runtime.Scheme) error {
-	return scheme.AddConversionFunc((*url.Values)(nil), (*v1.DeploymentLogOptions)(nil), func(a, b interface{}, scope conversion.Scope) error {
+
+	if err := scheme.AddConversionFunc((*url.Values)(nil), (*v1.DeploymentLogOptions)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_url_Values_To_v1_DeploymentLogOptions(a.(*url.Values), b.(*v1.DeploymentLogOptions), scope)
-	})
+	}); err != nil {
+		return err
+	}
+	if err := scheme.AddGeneratedConversionFunc((*v1beta1.Scale)(nil), (*autoscaling.Scale)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return extensionsv1beta1conversions.Convert_v1beta1_Scale_To_autoscaling_Scale(a.(*v1beta1.Scale), b.(*autoscaling.Scale), scope)
+	}); err != nil {
+		return err
+	}
+	if err := scheme.AddGeneratedConversionFunc((*autoscaling.Scale)(nil), (*v1beta1.Scale)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return extensionsv1beta1conversions.Convert_autoscaling_Scale_To_v1beta1_Scale(a.(*autoscaling.Scale), b.(*v1beta1.Scale), scope)
+	}); err != nil {
+		return err
+	}
+	return nil
 }
