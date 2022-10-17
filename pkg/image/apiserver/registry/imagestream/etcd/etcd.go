@@ -100,7 +100,7 @@ func NewRESTWithLimitVerifier(
 		return nil, nil, nil, nil, err
 	}
 
-	layersREST := &LayersREST{index: imageLayerIndex, Store: &store}
+	layersREST := &LayersREST{index: imageLayerIndex, store: &store}
 
 	statusStrategy := imagestream.NewStatusStrategy(strategy)
 	statusStore := store
@@ -158,7 +158,7 @@ func (r *InternalREST) Update(ctx context.Context, name string, objInfo rest.Upd
 
 // LayersREST implements the REST endpoint for changing both the spec and status of an image stream.
 type LayersREST struct {
-	*registry.Store
+	store *registry.Store
 	index ImageLayerIndex
 }
 
@@ -168,12 +168,14 @@ func (r *LayersREST) New() runtime.Object {
 	return &imageapi.ImageStreamLayers{}
 }
 
+func (r *LayersREST) Destroy() {}
+
 // Get returns the layers for an image stream.
 func (r *LayersREST) Get(ctx context.Context, name string, options *metav1.GetOptions) (runtime.Object, error) {
 	if !r.index.HasSynced() {
-		return nil, errors.NewServerTimeout(r.DefaultQualifiedResource, "get", 2)
+		return nil, errors.NewServerTimeout(r.store.DefaultQualifiedResource, "get", 2)
 	}
-	obj, err := r.Store.Get(ctx, name, options)
+	obj, err := r.store.Get(ctx, name, options)
 	if err != nil {
 		return nil, err
 	}
